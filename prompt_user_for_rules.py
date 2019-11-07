@@ -59,7 +59,7 @@ def parse_message(input_data, option):
         data_array = input_data.split(",")
         corrected_input = ""
         choice_option = ""
-        temp_trimmed_array = []
+        temp_string = ""
         for y in data_array:
             split_by_space = y.split(" ")
             for x in split_by_space:
@@ -73,21 +73,20 @@ def parse_message(input_data, option):
                         choice_option = input()
                     print(choice_option)
                     if int(choice_option) == 1:
-                        print(
-                            "Is the given word spelled correctly?\nGiven input: (%s) \nPossible spelling: (%s)\nplease input corrected word: " % (
-                                x.strip(), spell.correction(x.strip())))
+                        print("Is the given word spelled correctly?\nGiven input: (%s) \nPossible spelling: (%s)\n"
+                              "please input corrected word: " % (x.strip(), spell.correction(x.strip())))
                         corrected_input = input()
                         while spell.correction(corrected_input.strip()) != corrected_input:
-                            print(
-                                "Is the given word spelled correctly?\nGiven input: (%s) \nPossible spelling: (%s)\nplease input corrected word: " % (
-                                corrected_input, spell.correction(corrected_input.strip())))
+                            print("Possible spelling: (%s)\nplease input corrected word: " %
+                                  (corrected_input, spell.correction(corrected_input.strip())))
                             corrected_input = input()
-                        temp_trimmed_array.append(corrected_input.strip())
+                        temp_string += (str(corrected_input.strip())) + " "
                     else:
-                        temp_trimmed_array.append(y.strip())
+                        temp_string += (str(x.strip())) + " "
                 else:
-                    temp_trimmed_array.append(y.strip())
-            trimmed_array.append(temp_trimmed_array)
+                    temp_string += (str(x.strip())) + " "
+            trimmed_array.append(temp_string.strip())
+            temp_string = ""
             return trimmed_array
     if option == 3:
         temp_array = input_data.split(",")      # First parse it by comma
@@ -175,7 +174,9 @@ def main():
             display_message(ERROR_MSG)
         else:
             for word in user_input:
-                f.write(word + "\n")
+                for elem in word:
+                    f.write(elem)
+                f.write("\n")
             print(user_input)    # Eventually output that to file
 
     quit_prompt = False  # reset prompter
@@ -190,7 +191,7 @@ def main():
         else:
             for word in user_input:
                 for x in word:
-                    f.write(x)
+                    f.write(x + " ")
                 f.write("\n")
             print(user_input)  # Eventually output that to file
 
