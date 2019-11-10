@@ -2,7 +2,7 @@
 CS 4500 big project - Listener with Raspberry Pi
 
 
-*******     raspberry_word_counter.py     ************
+*******     make_codebook.py     ************
 
 It will ask user to input the words, phrases or patterns they want to look for.
 - First program will start prompting user to input words they want to count separated by comma
@@ -26,6 +26,7 @@ It will ask user to input the words, phrases or patterns they want to look for.
   
 After gathering all the data program will output to a file called "rules.txt"
 
+*******     word_counter.py     ************
 
 It will read rules.txt and check for specific pattterns in voice.txt 
 
