@@ -29,7 +29,7 @@ def validate(input_data, max_input):
     return True
 
 
-# This function receives data input as an array of strings and option which will interpriated as if word, phrase or
+# This function receives data input as an array of strings and option which will interpreted as if word, phrase or
 # pattern is given
 def parse_message(input_data, option):
     trimmed_array = []
