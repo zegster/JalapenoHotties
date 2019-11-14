@@ -1,10 +1,22 @@
+'''
+    Program Description: This program is designed to create code book for word_counter where it produced rules.txt file
+    which contains all necessary data for program to analyze speech file which will be created by raspberry pi.
+
+    Author: Bekzod Tolipov, Duc Ngo, Enrique Casillas, Lawrence C, Joel A
+    Date: 11/13/2019
+'''
+
 # type following to terminal to install: pip install pyspellchecker
+# its used to check typo's when program prompts the user for data
 from spellchecker import SpellChecker
 
 # Checks the spelling
 spell = SpellChecker()
 
 
+# Validates the input from user if it does NOT
+# exceed its limits for words, phrases, and patterns
+# allowed (6 words, 4 phrases, 2 patterns with lower bound 2 and upper bound 15)
 def validate(input_data, max_input):
     if not input_data:
         print("ERROR: Input size wrong")
@@ -17,212 +29,202 @@ def validate(input_data, max_input):
     return True
 
 
+# This function receives data input as an array of strings and option which will interpriated as if word, phrase or
+# pattern is given
 def parse_message(input_data, option):
     trimmed_array = []
     temp_array = []
     temp_string_split = []
     caution_msg = "\n--CAUTION: Current word may not return results as expected\n"
+    prompt_msg = "Is the given word spelled correctly?\nGiven input: (%s) \nPossible spelling: (%s)\nDo you " \
+                 "wish to change it:\n1) Yes\n2) No"
+    prompt_choice_wrong_msg = "Given input: (%s) \nPossible spelling: (%s)\nDo you " \
+                              "wish to change it:\n1) Yes\n2) No"
+    prompt_fixed_word_msg = "Given input: (%s) \nPossible spelling: (%s)\nplease input corrected word: "
+    second_chance_msg = "Do you want to change it:\n1) Yes\n2) No"
 
-    if option == 1:
+    if option == 1:     # IF OPTION IS FOR WORD
         if len(input_data.split(" ")) != len(input_data.split(",")):  # Check if number of words is same when parsed
             return False
         else:
-            data_array = input_data.split(",")
+            data_array = input_data.split(",")      # Split the given input_data by comma, data_array will hold return
+                                                    # string array of words
             corrected_input = ""
-            choice_option = ""
-            for x in data_array:
-                if spell.correction(x.strip()) != x.strip():
-                    print("Is the given word spelled correctly?\nGiven input: (%s) \nPossible spelling: (%s)\nDo you "
-                          "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                    choice_option = input()
-                    while int(choice_option) != 1 and int(choice_option) != 2:
-                        print(
-                            "Given input: (%s) \nPossible spelling: (%s)\nDo you "
-                            "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                        choice_option = input()
-                    print(choice_option)
-                    if int(choice_option) == 1:
-                        print(
-                            "Given input: (%s) \nPossible spelling: (%s)\nplease input corrected word: " % (
-                                x.strip(), spell.correction(x.strip())))
-                        corrected_input = input()
+            choice_option = ""      # its used to store user's choice for their desired choice
+            for x in data_array:    # traverse array of words
+                # first IF means it does not match
+                if spell.correction(x.strip()) != x.strip():    # Check if spelling is matching after auto correct check
+                    display_message(prompt_msg % (x.strip(), spell.correction(x.strip())))    # Prompt if want to change
+                    choice_option = read_input()
+                    while int(choice_option) != 1 and int(choice_option) != 2:  # If choice not 1 or not 2 ask again
+                        display_message(prompt_choice_wrong_msg % (x.strip(), spell.correction(x.strip())))
+                        choice_option = read_input()
+                    if int(choice_option) == 1:     # User wants to change the word
+                        display_message(prompt_fixed_word_msg % (x.strip(), spell.correction(x.strip())))
+                        corrected_input = read_input()
+                        # Check the word after user corrects it
                         while spell.correction(corrected_input.strip()) != corrected_input:
-                            print(
-                                "Given input: (%s) \nPossible spelling: (%s)\nplease input corrected word: " % (
-                                    corrected_input, spell.correction(corrected_input.strip())))
-                            corrected_input = input()
+                            display_message(prompt_fixed_word_msg % (corrected_input,
+                                                                     spell.correction(corrected_input.strip())))
+                            corrected_input = read_input()
+                        # add the newly modified word into trimmed_array
                         trimmed_array.append(corrected_input.strip())
-                    else:
-                        print(caution_msg)
-                        still_dont_want = True
-                        print("Do you want to change it:\n1) Yes\n2) No")
-                        choice_option = input()
+                    else:   # If user does NOT want to change the word
+                        display_message(caution_msg)  # Print caution msg
+                        still_dont_want = True  # Raise still dont want
+                        display_message(second_chance_msg)    # Ask second time if they still dont want to change it
+                        choice_option = read_input()
                         while int(choice_option) != 1 and int(choice_option) != 2:
-                            print(
-                                "Given input: (%s) \nPossible spelling: (%s)\nDo you "
-                                "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                            choice_option = input()
-                        print(choice_option)
-                        if int(choice_option) == 1:
+                            display_message(prompt_choice_wrong_msg % (x.strip(), spell.correction(x.strip())))
+                            choice_option = read_input()
+                        if int(choice_option) == 1:     # User chose to change the word
                             still_dont_want = False
-                            print(
-                                "Given input: (%s) \nPossible spelling: (%s)\nplease input corrected word: " % (
-                                    x.strip(), spell.correction(x.strip())))
-                            corrected_input = input()
+                            display_message(prompt_fixed_word_msg % (x.strip(), spell.correction(x.strip())))
+                            corrected_input = read_input()
                             while spell.correction(corrected_input.strip()) != corrected_input:
-                                print(
-                                    "Given input: (%s) \nPossible spelling: (%s)\nplease input corrected word: " % (
-                                        corrected_input, spell.correction(corrected_input.strip())))
-                                corrected_input = input()
+                                display_message(prompt_fixed_word_msg % (
+                                    corrected_input, spell.correction(corrected_input.strip())))
+                                corrected_input = read_input()
+                            # add the newly modified word into trimmed_array
                             trimmed_array.append(corrected_input.strip())
-                        if still_dont_want:
+                        if still_dont_want:     # This will be executed only if user does NOT want to change word
                             trimmed_array.append(x.strip())
                 else:
+                    # add the newly modified word into trimmed_array
                     trimmed_array.append(x.strip())
+            # return trimmed_array back
             return trimmed_array
-    if option == 2:
-        data_array = input_data.split(",")
+    # Phrases limits only allowed to consist minimum 2 words and maximum 3 words for each phrase
+    if option == 2:     # IF OPTION IS FOR PHRASE
+        data_array = input_data.split(",")  # Split the given input_data by comma, data_array will hold return
+                                            # string array of phrases
         corrected_input = ""
         choice_option = ""
         temp_string = ""
-        for y in data_array:
-            split_by_space = y.split(" ")
-            for x in split_by_space:
+        # Since data_array holds array of phrases we need to check each word in a phrase
+        for y in data_array:    # Phrase in phrases
+            split_by_space = y.split(" ")  # Split the given phrase "y" and split it by space
+            for x in split_by_space:    # Each word in a phrase
                 if spell.correction(x.strip()) != x.strip():
-                    print("Is the given word spelled correctly?\nGiven input: (%s) \nPossible spelling: (%s)\nDo you "
-                          "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                    choice_option = input()
+                    display_message(prompt_msg % (x.strip(), spell.correction(x.strip())))
+                    choice_option = read_input()
                     while int(choice_option) != 1 and int(choice_option) != 2:
-                        print("Given input: (%s) \nPossible spelling: (%s)\nDo you "
-                              "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                        choice_option = input()
-                    print(choice_option)
+                        display_message(prompt_choice_wrong_msg % (x.strip(), spell.correction(x.strip())))
+                        choice_option = read_input()
                     if int(choice_option) == 1:
-                        print("Given input: (%s) \nPossible spelling: (%s)\n"
-                              "please input corrected word: " % (x.strip(), spell.correction(x.strip())))
-                        corrected_input = input()
+                        display_message(prompt_fixed_word_msg % (x.strip(), spell.correction(x.strip())))
+                        corrected_input = read_input()
                         while spell.correction(corrected_input.strip()) != corrected_input:
-                            print("Possible spelling: (%s)\nplease input corrected word: " %
-                                  (corrected_input, spell.correction(corrected_input.strip())))
-                            corrected_input = input()
+                            display_message(prompt_fixed_word_msg % (corrected_input,
+                                                                     spell.correction(corrected_input.strip())))
+                            corrected_input = read_input()
+                        # Create new phrase with fixed word
                         temp_string += (str(corrected_input.strip())) + " "
                     else:
-                        print(caution_msg)
+                        display_message(caution_msg)
                         still_no_change = True
-                        print("Do you want to change it:\n1) Yes\n2) No")
-                        choice_option = input()
+                        display_message(second_chance_msg)
+                        choice_option = read_input()
                         while int(choice_option) != 1 and int(choice_option) != 2:
-                            print(
-                                "\nGiven input: (%s) \nPossible spelling: (%s)\nDo you "
-                                "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                            choice_option = input()
-                        print(choice_option)
+                            display_message(prompt_choice_wrong_msg % (x.strip(), spell.correction(x.strip())))
+                            choice_option = read_input()
                         if int(choice_option) == 1:
                             still_no_change = False
-                            print("Given input: (%s) \nPossible spelling: (%s)\n"
-                                  "please input corrected word: " % (x.strip(), spell.correction(x.strip())))
-                            corrected_input = input()
+                            display_message(prompt_fixed_word_msg % (x.strip(), spell.correction(x.strip())))
+                            corrected_input = read_input()
                             while spell.correction(corrected_input.strip()) != corrected_input:
-                                print("Possible spelling: (%s)\nplease input corrected word: " %
+                                display_message(prompt_fixed_word_msg %
                                       (corrected_input, spell.correction(corrected_input.strip())))
-                                corrected_input = input()
+                                corrected_input = read_input()
                             temp_string += (str(corrected_input.strip())) + " "
-                        else:
+                        else:  # No need for still_no_change anymore can remove it
                             if still_no_change:
                                 temp_string += (str(x.strip())) + " "
-                else:
+                else:   # If spelling is correct just copy it
                     temp_string += (str(x.strip())) + " "
+            # Each fixed phrase appends into trimmed_array
             trimmed_array.append(temp_string.strip())
-            temp_string = ""
+            temp_string = ""    # Reset temp_string
             return trimmed_array
-    if option == 3:
+    if option == 3:     # IF OPTION IS FOR PATTERN
         temp_array = input_data.split(",")  # First parse it by comma
         temp_value = 0
         temp_string = ""
         for element in temp_array:
             temp_trimmer = []
             temp_string_split = (element.strip()).split(" ")  # Second parse it by space
-            print(temp_string_split)
             if len(temp_string_split) == 4:  # Make sure it has 4 elements
                 count = 1
                 for x in temp_string_split:  # Check for first two words autocorrect and than 3rd and 4th integer
-                    if count == 1 or count == 2:
-                        ####################################################
+                    if count == 1 or count == 2:    # First and second element of the pattern
+                        ##################### Check words below ###############################
                         if spell.correction(x.strip()) != x.strip():
-                            print(
-                                "Is the given word spelled correctly?\nGiven input: (%s) \nPossible spelling: (%s)\nDo you "
-                                "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                            choice_option = input()
+                            display_message(prompt_msg % (x.strip(), spell.correction(x.strip())))
+                            choice_option = read_input()
                             while int(choice_option) != 1 and int(choice_option) != 2:
-                                print("Given input: (%s) \nPossible spelling: (%s)\nDo you "
-                                      "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                                choice_option = input()
-                            print(choice_option)
+                                display_message(prompt_choice_wrong_msg % (x.strip(), spell.correction(x.strip())))
+                                choice_option = read_input()
                             if int(choice_option) == 1:
-                                print("Given input: (%s) \nPossible spelling: (%s)\n"
-                                      "please input corrected word: " % (x.strip(), spell.correction(x.strip())))
-                                corrected_input = input()
+                                display_message(prompt_fixed_word_msg % (x.strip(), spell.correction(x.strip())))
+                                corrected_input = read_input()
                                 while spell.correction(corrected_input.strip()) != corrected_input:
-                                    print("Possible spelling: (%s)\nplease input corrected word: " %
+                                    display_message(prompt_fixed_word_msg %
                                           (corrected_input, spell.correction(corrected_input.strip())))
-                                    corrected_input = input()
+                                    corrected_input = read_input()
                                 temp_string += (str(corrected_input.strip())) + " "
                             else:
-                                print(caution_msg)
+                                display_message(caution_msg)
                                 still_no_change = True
-                                print("Do you want to change it:\n1) Yes\n2) No")
-                                choice_option = input()
+                                display_message(second_chance_msg)
+                                choice_option = read_input()
                                 while int(choice_option) != 1 and int(choice_option) != 2:
-                                    print(
-                                        "\nGiven input: (%s) \nPossible spelling: (%s)\nDo you "
-                                        "wish to change it:\n1) Yes\n2) No" % (x.strip(), spell.correction(x.strip())))
-                                    choice_option = input()
-                                print(choice_option)
+                                    display_message(prompt_choice_wrong_msg % (x.strip(), spell.correction(x.strip())))
+                                    choice_option = read_input()
                                 if int(choice_option) == 1:
                                     still_no_change = False
-                                    print("Given input: (%s) \nPossible spelling: (%s)\n"
-                                          "please input corrected word: " % (x.strip(), spell.correction(x.strip())))
-                                    corrected_input = input()
+                                    display_message(prompt_fixed_word_msg % (x.strip(), spell.correction(x.strip())))
+                                    corrected_input = read_input()
                                     while spell.correction(corrected_input.strip()) != corrected_input:
-                                        print("Possible spelling: (%s)\nplease input corrected word: " %
-                                              (corrected_input, spell.correction(corrected_input.strip())))
-                                        corrected_input = input()
+                                        display_message(prompt_fixed_word_msg %
+                                                        (corrected_input, spell.correction(corrected_input.strip())))
+                                        corrected_input = read_input()
                                     temp_string += (str(corrected_input.strip())) + " "
                                 else:
-
                                     if still_no_change:
                                         temp_string = (str(x.strip()))
-                        else:
+                        else:   # If spelling is correct
                             temp_string = (str(x.strip()))
                         temp_trimmer.append(temp_string.strip())
-                        ####################################################
-                    if count == 3:
+                    ##################### Check the lower bound and upper bound ###############################
+                    if count == 3:  # Lower bound element of the pattern
                         if x.isdigit():  # Is it integer?
-                            if int(x) < 2 or int(x) >= 15:
+                            if int(x) < 2 or int(x) >= 15:  # Allowed min:2 and max:14
                                 return False
                             temp_trimmer.append(x)
                             temp_value = int(x)
                         else:
                             return False
-                    if count == 4:
+                    if count == 4:  # Upper bound element of the pattern
                         if x.isdigit():  # Is it integer?
-                            if temp_value > int(x) or int(x) > 15:
+                            if temp_value > int(x) or int(x) > 15:  # Allowed min:lower_bound and max:15
                                 return False
                             temp_trimmer.append(x)
                         else:
                             return False
                     count += 1
-            else:
+            else:       # If pattern contains more than or less than 4 elements
                 return False
             trimmed_array.append(temp_trimmer)
         return trimmed_array
 
 
+# Reads the input from user
 def read_input():
     input_data = input()
     return input_data
 
 
+# Displays the message
 def display_message(output_message):
     print(output_message)
 
@@ -252,10 +254,11 @@ def main():
         if not quit_prompt:
             display_message(ERROR_MSG)
         else:
+            # Output result to a file
             f = open(output_file_name, "w")
             for word in user_input:
                 f.write(word + "\n")
-            print(user_input)  # Eventually output that to file
+            print(user_input)   # Print it to terminal too
 
     quit_prompt = False  # reset prompter
     while not quit_prompt:
@@ -267,11 +270,12 @@ def main():
         if not quit_prompt:
             display_message(ERROR_MSG)
         else:
+            # Output result to a file
             for word in user_input:
                 for elem in word:
                     f.write(elem)
                 f.write("\n")
-            print(user_input)  # Eventually output that to file
+            print(user_input)  # Print it to terminal too
 
     quit_prompt = False  # reset prompter
     while not quit_prompt:
@@ -283,12 +287,13 @@ def main():
         if not quit_prompt:
             display_message(ERROR_MSG)
         else:
+            # Output result to a file
             for word in user_input:
                 for x in word:
                     f.write(x + " ")
                 f.write("\n")
-            print(user_input)  # Eventually output that to file
-
+            print(user_input)  # Print it to terminal too
+    # Close the file
     f.close()
 
 
