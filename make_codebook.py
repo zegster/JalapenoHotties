@@ -29,7 +29,7 @@ def validate(input_data, max_input):
     return True
 
 
-# This function receives data input as an array of strings and option which will interpriated as if word, phrase or
+# This function receives data input as an array of strings and option which will interprated as if word, phrase or
 # pattern is given
 def parse_message(input_data, option):
     trimmed_array = []
@@ -145,7 +145,7 @@ def parse_message(input_data, option):
             # Each fixed phrase appends into trimmed_array
             trimmed_array.append(temp_string.strip())
             temp_string = ""    # Reset temp_string
-            return trimmed_array
+        return trimmed_array
     if option == 3:     # IF OPTION IS FOR PATTERN
         temp_array = input_data.split(",")  # First parse it by comma
         temp_value = 0
