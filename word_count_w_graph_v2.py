@@ -57,6 +57,18 @@ with open(rules_file) as fp:
                 y += 1
             cnt += 1
 
+        elif len(new_line) is 2:
+            a = new_line[0]
+            b = new_line[1]
+            z = 0
+            k = (len(word_list)) - 1
+
+            while z < len(word_list):
+                if (z <= k) and a in word_list[z] and b in word_list[z + 1]:
+                    count_final[cnt] += 1
+                z += 1
+            cnt += 1
+
         elif len(new_line) is 3:
             a = new_line[0]
             b = new_line[1]
@@ -91,12 +103,14 @@ with open(rules_file) as fp:
 # this is for plotting purpose
 index = np.arange(len(graph_list))
 plt.rcParams['toolbar'] = 'None'
-plt.subplots_adjust(bottom=0.38)
-plt.bar(index, count_final)
+plt.barh(index, count_final, align='center', alpha=0.5)
+plt.yticks(index, graph_list, fontsize=10)
 plt.xlabel('Rule', fontsize=10)
 plt.ylabel('Count', fontsize=10)
-plt.xticks(index, graph_list, fontsize=10, rotation=50)
 plt.title('Results')
+plt.tight_layout()
+fig = plt.gcf()
+fig.canvas.set_window_title('Word Count')
 plt.show()
 
 
