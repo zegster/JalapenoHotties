@@ -1,4 +1,3 @@
-import re
 import matplotlib.pyplot as plt
 from pathlib import Path
 from collections import Counter
@@ -41,10 +40,13 @@ my_file = open(rules_file).readlines()
 x = 0
 
 with open(rules_file) as fp:
+
     for cnt, line in enumerate(fp):
 
         new_line = line.split(" ")
         new_line[-1] = new_line[-1].strip()
+        while "" in new_line:
+            new_line.remove("")
         graph_list.append(new_line)
 
         if len(new_line) is 1:
@@ -60,9 +62,10 @@ with open(rules_file) as fp:
             b = new_line[1]
             c = new_line[2]
             z = 0
+            k = (len(word_list)) - 2
 
             while z < len(word_list):
-                if a in word_list[z] and b in word_list[z+1] and c in word_list[z+2]:
+                if (z <= k) and a in word_list[z] and b in word_list[z+1] and c in word_list[z+2]:
                     count_final[cnt] += 1
                 z += 1
             cnt += 1
@@ -79,7 +82,7 @@ with open(rules_file) as fp:
 
                 if a in word_list[q]:
                     for i in range(c, d):
-                        if b in word_list[q + i]:
+                        if ((q + i) < len(word_list)) and b in word_list[q + i]:
                             count_final[cnt] += 1
 
                 q += 1
@@ -87,10 +90,8 @@ with open(rules_file) as fp:
 
 # this is for plotting purpose
 index = np.arange(len(graph_list))
-#plt.figure(figsize=(10, 10))
-#plt.rcParams["figure.figsize"] = (5, 9)
 plt.rcParams['toolbar'] = 'None'
-plt.subplots_adjust(bottom=0.35)
+plt.subplots_adjust(bottom=0.38)
 plt.bar(index, count_final)
 plt.xlabel('Rule', fontsize=10)
 plt.ylabel('Count', fontsize=10)
@@ -106,3 +107,4 @@ print(new_line)
 print(cnt)
 print(len(new_line))
 print(graph_list)
+
