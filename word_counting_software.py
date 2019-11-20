@@ -1,6 +1,6 @@
 # Program Description: This program is designed to take input file name from user
 # and read the file extract words, remove special symbols, than count the words by using
-# dictionory method. At the end output the result to a default file and also show the
+# dictionary method. At the end output the result to a default file and also show the
 # result in a bar chart.
 # Date: 10/11/2019
 # Authors: Bekzod Tolipov, Nelson Su, Khalfani Wadlington

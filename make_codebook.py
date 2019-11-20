@@ -29,7 +29,7 @@ def validate(input_data, max_input):
     return True
 
 
-# This function receives data input as an array of strings and option which will interpreted as if word, phrase or
+# This function receives data input as an array of strings and option which will interprated as if word, phrase or
 # pattern is given
 def parse_message(input_data, option):
     trimmed_array = []
@@ -104,6 +104,10 @@ def parse_message(input_data, option):
         # Since data_array holds array of phrases we need to check each word in a phrase
         for y in data_array:    # Phrase in phrases
             split_by_space = y.split(" ")  # Split the given phrase "y" and split it by space
+            if len(split_by_space) == 1:
+                return False
+            if 2 < len(split_by_space) < 4:
+                return False
             for x in split_by_space:    # Each word in a phrase
                 if spell.correction(x.strip()) != x.strip():
                     display_message(prompt_msg % (x.strip(), spell.correction(x.strip())))
@@ -145,7 +149,7 @@ def parse_message(input_data, option):
             # Each fixed phrase appends into trimmed_array
             trimmed_array.append(temp_string.strip())
             temp_string = ""    # Reset temp_string
-            return trimmed_array
+        return trimmed_array
     if option == 3:     # IF OPTION IS FOR PATTERN
         temp_array = input_data.split(",")  # First parse it by comma
         temp_value = 0
@@ -237,7 +241,8 @@ def main():
     MAX_PHRASES = 4
     MAX_PATTERNS = 2
     PROMPT_FOR_WORDS = "Please input up to 6 words separated by comma',' (word_1, word_2...):"
-    PROMPT_FOR_PHRASES = "Please input up to 4 phrases separated by comma',' (phrase_1, phrase_2...):"
+    PROMPT_FOR_PHRASES = "Please input up to 4 phrases separated by comma',' " \
+                         "min:2 words and max:3 words (phrase_1, phrase_2...):"
     PROMPT_FOR_PATTERN = "Please input up to 2 pattern followed by upper-bound=u, lower-bound=l " \
                          "separated by comma',' (word_1 word_2 l u, word_1 word_2 l u...):"
     ERROR_MSG = "ERROR: Given input was wrong please follow the following example:"
