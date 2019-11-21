@@ -43,10 +43,13 @@ with open(rules_file) as fp:
 
     for cnt, line in enumerate(fp):
 
-        new_line = line.split(" ")
-        new_line[-1] = new_line[-1].strip()
-        while "" in new_line:
-            new_line.remove("")
+        old_line = line.split(" ")
+        old_line[-1] = old_line[-1].strip()
+        while "" in old_line:
+            old_line.remove("")
+        new_line = []
+        for word in old_line:
+            new_line.append(word.lower())
         graph_list.append(new_line)
 
         if len(new_line) is 1:
