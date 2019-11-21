@@ -103,7 +103,7 @@ def parse_message(input_data, option):
         temp_string = ""
         # Since data_array holds array of phrases we need to check each word in a phrase
         for y in data_array:    # Phrase in phrases
-            split_by_space = y.split(" ")  # Split the given phrase "y" and split it by space
+            split_by_space = (y.strip()).split(" ")  # Split the given phrase "y" and split it by space
             print(len(split_by_space))
             if len(split_by_space) == 1:
                 return False
