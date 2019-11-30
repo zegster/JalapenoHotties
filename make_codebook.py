@@ -69,7 +69,13 @@ def parse_message(input_data, option):
     second_chance_msg = "Do you want to change it:\n1) Yes\n2) No"
 
     if option == 1:     # IF OPTION IS FOR WORD
-        if len((input_data.strip()).split(" ")) != len(input_data.split(",")):  # Check if number of words is same when parsed
+        # Check if number of words is same when parsed
+        checking = (input_data.strip()).split(",")
+        count = 0
+        for element in checking:
+            checking[count] = element.strip()
+            count += 1
+        if len(checking) != len(input_data.split(",")):
             return -1
         else:
             data_array = input_data.split(",")      # Split the given input_data by comma, data_array will hold return
@@ -192,7 +198,7 @@ def parse_message(input_data, option):
                 count = 1
                 for x in temp_string_split:  # Check for first two words autocorrect and than 3rd and 4th integer
                     if count == 1 or count == 2:    # First and second element of the pattern
-                        ##################### Check words below ###############################
+                        # -------------- Check words below ------------------- #
                         if spell.correction(x.strip()) != x.strip():
                             display_message(prompt_msg % (x.strip(), spell.correction(x.strip())))
                             choice_option = read_input()
@@ -231,7 +237,7 @@ def parse_message(input_data, option):
                             temp_string = (str(x.strip()))
                         temp_trimmer.append(temp_string.strip())
                     temp_string = ""
-                    ##################### Check the lower bound and upper bound ###############################
+                    # --------------- Check the lower bound and upper bound ----------------- #
                     if count == 3:  # Lower bound element of the pattern
                         if x.isdigit():  # Is it integer?
                             if int(x) < 2 or int(x) >= 15:  # Allowed min:2 and max:14
