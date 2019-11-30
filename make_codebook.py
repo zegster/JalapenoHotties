@@ -18,12 +18,37 @@ spell = SpellChecker()
 # exceed its limits for words, phrases, and patterns
 # allowed (6 words, 4 phrases, 2 patterns with lower bound 2 and upper bound 15)
 def validate(input_data, max_input):
-    if not input_data:
-        print("ERROR: Input size wrong")
+    if input_data == -1:
+        print("ERROR in Word: More than 1 word given in a input")
+        return False
+
+    if input_data == -2:
+        print("ERROR in Phrases: Given data contains only a word, you need 2 or 3 words to create phrase")
+        return False
+
+    if input_data == -3:
+        print("ERROR in Phrases: minimum 2 words and maximum 3 words are allowed")
+        return False
+
+    if input_data == 3:
+        print("ERROR in Pattern: minimum 2 lower bound and maximum 14 for upper bound are allowed for first number")
+        return False
+
+    if input_data == 4:
+        print("ERROR in Pattern: (minimum = maximum given for first number + 1) lower bound and maximum 15 for "
+              "upper bound are allowed for second number")
+        return False
+
+    if input_data == -4:
+        print("ERROR in Pattern: Less than 4 elements given, missing data")
+        return False
+
+    if input_data == -5:
+        print("ERROR in Pattern: More than 4 elements given, extra data")
         return False
 
     if len(input_data) > max_input:
-        print("ERROR: Input size wrong")
+        print("ERROR: Input size wrong, maximum input is %d" % max_input)
         return False
 
     return True
@@ -44,8 +69,8 @@ def parse_message(input_data, option):
     second_chance_msg = "Do you want to change it:\n1) Yes\n2) No"
 
     if option == 1:     # IF OPTION IS FOR WORD
-        if len(input_data.split(" ")) != len(input_data.split(",")):  # Check if number of words is same when parsed
-            return False
+        if len((input_data.strip()).split(" ")) != len(input_data.split(",")):  # Check if number of words is same when parsed
+            return -1
         else:
             data_array = input_data.split(",")      # Split the given input_data by comma, data_array will hold return
                                                     # string array of words
@@ -103,12 +128,12 @@ def parse_message(input_data, option):
         temp_string = ""
         # Since data_array holds array of phrases we need to check each word in a phrase
         for y in data_array:    # Phrase in phrases
-            split_by_space = y.split(" ")  # Split the given phrase "y" and split it by space
+            split_by_space = (y.strip()).split(" ")  # Split the given phrase "y" and split it by space
             print(len(split_by_space))
             if len(split_by_space) == 1:
-                return False
+                return -2
             if 2 < len(split_by_space) > 4:
-                return False
+                return -3
             for x in split_by_space:    # Each word in a phrase
                 if spell.correction(x.strip()) != x.strip():
                     display_message(prompt_msg % (x.strip(), spell.correction(x.strip())))
@@ -156,6 +181,11 @@ def parse_message(input_data, option):
         temp_value = 0
         temp_string = ""
         for element in temp_array:
+            check_array = element.split(" ")
+            if len(check_array) < 4:
+                return -4
+            if len(check_array) > 4:
+                return -5
             temp_trimmer = []
             temp_string_split = (element.strip()).split(" ")  # Second parse it by space
             if len(temp_string_split) == 4:  # Make sure it has 4 elements
@@ -200,19 +230,20 @@ def parse_message(input_data, option):
                         else:   # If spelling is correct
                             temp_string = (str(x.strip()))
                         temp_trimmer.append(temp_string.strip())
+                    temp_string = ""
                     ##################### Check the lower bound and upper bound ###############################
                     if count == 3:  # Lower bound element of the pattern
                         if x.isdigit():  # Is it integer?
                             if int(x) < 2 or int(x) >= 15:  # Allowed min:2 and max:14
-                                return False
+                                return count
                             temp_trimmer.append(x)
                             temp_value = int(x)
                         else:
                             return False
                     if count == 4:  # Upper bound element of the pattern
                         if x.isdigit():  # Is it integer?
-                            if temp_value > int(x) or int(x) > 15:  # Allowed min:lower_bound and max:15
-                                return False
+                            if temp_value >= int(x) or int(x) > 15:  # Allowed min:lower_bound and max:15
+                                return count
                             temp_trimmer.append(x)
                         else:
                             return False
@@ -246,7 +277,7 @@ def main():
                          "min:2 words and max:3 words (phrase_1, phrase_2...):"
     PROMPT_FOR_PATTERN = "Please input up to 2 pattern followed by upper-bound=u, lower-bound=l " \
                          "separated by comma',' (word_1 word_2 l u, word_1 word_2 l u...):"
-    ERROR_MSG = "ERROR: Given input was wrong please follow the following example:"
+    ERROR_MSG = "REMINDER: Please follow the following example:"
     PROMPT_WORD_OPTION = 1
     PROMPT_PHRASE_OPTION = 2
     PROMPT_PATTER_OPTION = 3
