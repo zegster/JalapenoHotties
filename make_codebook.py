@@ -281,7 +281,7 @@ def main():
     PROMPT_FOR_WORDS = "Please input up to 6 words separated by comma',' (word_1, word_2...):"
     PROMPT_FOR_PHRASES = "Please input up to 4 phrases separated by comma',' " \
                          "min:2 words and max:3 words (phrase_1, phrase_2...):"
-    PROMPT_FOR_PATTERN = "Please input up to 2 pattern followed by upper-bound=u, lower-bound=l " \
+    PROMPT_FOR_PATTERN = "Please input up to 2 pattern followed by lower-bound=l, upper-bound=u " \
                          "separated by comma',' (word_1 word_2 l u, word_1 word_2 l u...):"
     ERROR_MSG = "REMINDER: Please follow the following example:"
     PROMPT_WORD_OPTION = 1
