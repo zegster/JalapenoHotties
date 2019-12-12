@@ -3,7 +3,7 @@ from spellchecker import SpellChecker
 
 r = sr.Recognizer()
 m = sr.Microphone()
-f = open("transciption.txt", "w")
+f = open("voice.txt", "w")
 
 try:
     print("A moment of silence, please...")
